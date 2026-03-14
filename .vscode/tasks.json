@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile & Run Kotlin File",
+      "type": "shell",
+      "command": "mkdir -p '${workspaceFolder}/jars' && kotlinc '${file}' -include-runtime -d '${workspaceFolder}/jars/${fileBasenameNoExtension}.jar' && kotlin '${workspaceFolder}/jars/${fileBasenameNoExtension}.jar'",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Compile Kotlin File (JAR only)",
+      "type": "shell",
+      "command": "mkdir -p '${workspaceFolder}/jars' && kotlinc '${file}' -include-runtime -d '${workspaceFolder}/jars/${fileBasenameNoExtension}.jar' && echo '✅ JAR created at jars/${fileBasenameNoExtension}.jar'",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}

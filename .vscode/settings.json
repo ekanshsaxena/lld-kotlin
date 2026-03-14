@@ -1,0 +1,7 @@
+{
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "code-runner.runInTerminal": true,
+  "code-runner.executorMap": {
+    "kotlin": "mkdir -p jars && kotlinc $fileName -include-runtime -d jars/$fileNameWithoutExt.jar && java -jar jars/$fileNameWithoutExt.jar"
+  }
+}

@@ -1,0 +1,13 @@
+# Compiled JAR output directory
+jars/
+
+# Gradle build outputs
+build/
+.gradle/
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
