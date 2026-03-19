@@ -1,41 +1,62 @@
-interface Beverage {
-    fun getDescription(): String
-    fun cost(): Double
+enum class Size { SMALL, MEDIUM, LARGE }
+
+abstract class Beverage(val size: Size = Size.MEDIUM) {
+    abstract fun getDescription(): String
+    abstract fun cost(): Double
 }
 
-abstract class CondimentDecorator(protected val beverage: Beverage) : Beverage {
-    abstract override fun getDescription(): String
+abstract class CondimentDecorator(protected val beverage: Beverage) : Beverage(beverage.size)
+
+class Espresso(size: Size = Size.MEDIUM) : Beverage(size) {
+    override fun getDescription() = "Espresso"
+    override fun cost() = when (size) {
+        Size.SMALL  -> 1.79
+        Size.MEDIUM -> 1.99
+        Size.LARGE  -> 2.29
+    }
 }
 
-class Espresso : Beverage {
-    override fun getDescription(): String = "Espresso"
-    override fun cost(): Double = 1.99
-}
-
-class HouseBlend : Beverage {
-    override fun getDescription(): String = "House Blend Coffee"
-    override fun cost(): Double = 0.89
+class HouseBlend(size: Size = Size.MEDIUM) : Beverage(size) {
+    override fun getDescription() = "House Blend Coffee"
+    override fun cost() = when (size) {
+        Size.SMALL  -> 0.69
+        Size.MEDIUM -> 0.89
+        Size.LARGE  -> 1.09
+    }
 }
 
 class Mocha(beverage: Beverage) : CondimentDecorator(beverage) {
-
-    override fun getDescription(): String = beverage.getDescription() + ", Mocha"
-    override fun cost(): Double = beverage.cost() + 0.20
+    override fun getDescription() = beverage.getDescription() + ", Mocha"
+    override fun cost() = beverage.cost() + when (size) {
+        Size.SMALL  -> 0.10
+        Size.MEDIUM -> 0.20
+        Size.LARGE  -> 0.30
+    }
 }
 
 class Soy(beverage: Beverage) : CondimentDecorator(beverage) {
+    override fun getDescription() = beverage.getDescription() + ", Soy"
+    override fun cost() = beverage.cost() + when (size) {
+        Size.SMALL  -> 0.10
+        Size.MEDIUM -> 0.15
+        Size.LARGE  -> 0.20
+    }
+}
 
-    override fun getDescription(): String = beverage.getDescription() + ", Soy"
-    override fun cost(): Double = beverage.cost() + 0.15
+fun printOrder(beverage: Beverage) {
+    println("[${beverage.size}] ${beverage.getDescription()} -> ${"$%.2f".format(beverage.cost())}")
 }
 
 fun main() {
-    var beverage: Beverage = Espresso()
-    println("${beverage.getDescription()} $${beverage.cost()}")
+    // Medium Espresso (default size)
+    printOrder(Espresso())
 
-    beverage = Mocha(beverage)
-    println("${beverage.getDescription()} $${beverage.cost()}")
+    // Large Espresso with Mocha
+    printOrder(Mocha(Espresso(Size.LARGE)))
 
-    beverage = Soy(beverage)
-    println("${beverage.getDescription()} $${beverage.cost()}")
+    // Small HouseBlend with Mocha + Soy
+    var order: Beverage = HouseBlend(Size.SMALL)
+    order = Mocha(order)
+    order = Soy(order)
+    printOrder(order)
 }
