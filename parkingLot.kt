@@ -150,26 +150,9 @@ enum class VEHICLE_TYPE {
     TRUCK
 }
 
-class Vehicle(val type: VEHICLE_TYPE, val vehicleNumber: String)
+data class Vehicle(val type: VEHICLE_TYPE, val vehicleNumber: String)
 
-class ParkingSpot(val spotNumber: String, val floorNumber: Int, val type: VEHICLE_TYPE) {
-    var isOccupied: Boolean = false
-    var vehicle: Vehicle? = null
-
-    fun parkVehicle(vehicle: Vehicle): Boolean {
-        if (isOccupied || vehicle.type.ordinal > type.ordinal) return false
-        this.vehicle = vehicle
-        isOccupied = true
-        return true
-    }
-
-    fun removeVehicle(): Boolean {
-        if (!isOccupied) return false
-        vehicle = null
-        isOccupied = false
-        return true
-    }
-}
+data class ParkingSpot(val spotNumber: String, val floorNumber: Int, val type: VEHICLE_TYPE)
 
 class SpotManager(val spotsCapacity: Int, val type: VEHICLE_TYPE) {
     val availableSpots: MutableList<ParkingSpot> = mutableListOf()
@@ -198,9 +181,9 @@ class SpotManager(val spotsCapacity: Int, val type: VEHICLE_TYPE) {
 
     fun findAvailableSpot(): ParkingSpot? = availableSpots.firstOrNull()
 
-    fun parkVehicle(vehicle: Vehicle): ParkingSpot? {
+    fun parkVehicle(): ParkingSpot? {
         val spot = availableSpots.firstOrNull()
-        if (spot != null && spot.parkVehicle(vehicle)) {
+        if (spot != null) {
             availableSpots.remove(spot)
             occupiedSpots.add(spot)
             return spot
@@ -210,12 +193,9 @@ class SpotManager(val spotsCapacity: Int, val type: VEHICLE_TYPE) {
 
     fun removeVehicle(spot: ParkingSpot): Boolean {
         if (spot.type != this.type || !occupiedSpots.contains(spot)) return false
-        if (spot.removeVehicle()) {
-            availableSpots.add(spot)
-            occupiedSpots.remove(spot)
-            return true
-        }
-        return false
+        availableSpots.add(spot)
+        occupiedSpots.remove(spot)
+        return true
     }
 }
 
@@ -248,7 +228,7 @@ class ParkingFloor(val floorNumber: Int) {
     fun parkVehicle(vehicle: Vehicle): ParkingSpot? {
         val spot = findAvailableSpot(vehicle.type)
         return if (spot != null) {
-            spotManagers[spot.type]?.parkVehicle(vehicle)
+            spotManagers[spot.type]?.parkVehicle()
         } else {
             null
         }
